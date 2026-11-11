@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Less Waste, More Life!</title>
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Figtree:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: one long campaign scroll — live counter → evidence → sorting game → pledge → finale. Sticky chapter nav. */
+:root{
+  --paper:#EDF1EA; --surface:#F8FAF6; --ink:#10231E; --muted:#4D615A; --line:#C7D2C9;
+  --leaf:#1E7A54; --leaf-soft:#D3E8DC; --signal:#F2B200; --danger:#C2432D;
+  --bin-white:#FFFFFF; --bin-green:#2E8B4E; --bin-black:#1B1F1E; --bin-red:#C9372C;
+  --on-dark:#F3F6F2;
+  --f-display:"Bricolage Grotesque", "Arial Black", system-ui, sans-serif;
+  --f-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0C1713; --surface:#13211C; --ink:#E4EDE7; --muted:#97AAA2; --line:#26392F;
+  --leaf:#4CC38A; --leaf-soft:#173528; --signal:#F4C430; --danger:#E66A52;
+  --bin-white:#F2F4F1; --bin-green:#3FA463; --bin-black:#050706; --bin-red:#E04A3C; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --paper:#0C1713; --surface:#13211C; --ink:#E4EDE7; --muted:#97AAA2; --line:#26392F;
+  --leaf:#4CC38A; --leaf-soft:#173528; --signal:#F4C430; --danger:#E66A52;
+  --bin-white:#F2F4F1; --bin-green:#3FA463; --bin-black:#050706; --bin-red:#E04A3C; color-scheme:dark;}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--paper)}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);font-weight:800;line-height:1;text-wrap:balance;margin:0;letter-spacing:-.02em}
+p{margin:0}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--leaf);font-weight:700}
+.src{font-size:13px;color:var(--muted)}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--signal);outline-offset:3px;border-radius:6px}
+
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:16px;height:56px}
+.brand{font-family:var(--f-display);font-weight:800;font-size:17px;white-space:nowrap}
+.brand b{color:var(--leaf)}
+.nav ul{display:flex;gap:4px;list-style:none;margin:0 0 0 auto;padding:0;overflow-x:auto;scrollbar-width:none}
+.nav a{display:block;padding:6px 12px;border-radius:999px;color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;white-space:nowrap}
+.nav a:hover,.nav a.on{background:var(--ink);color:var(--paper)}
+@media (max-width:640px){.brand{display:none}.nav ul{margin:0}}
+
+section{padding-block:72px;border-bottom:1px solid var(--line)}
+.head{display:grid;gap:12px;margin-bottom:36px;max-width:680px}
+.head h2{font-size:clamp(34px,6vw,56px)}
+.head p{color:var(--muted);font-size:18px}
+
+/* hero */
+.hero{padding-block:56px 64px}
+.hero h1{font-size:clamp(56px,13vw,148px);line-height:.88;letter-spacing:-.045em}
+.hero h1 span{display:block}
+.hero h1 .l2{color:var(--leaf)}
+.hero .meta{margin-top:20px;color:var(--muted);font-size:15px}
+.counter{margin-top:44px;background:var(--ink);color:var(--on-dark);border-radius:20px;padding:28px clamp(20px,4vw,40px);display:grid;gap:18px;position:relative;overflow:hidden}
+.counter canvas{position:absolute;inset:0;width:100%;height:100%;opacity:.5;pointer-events:none}
+.counter > *:not(canvas){position:relative}
+.counter .lbl{font-size:15px;color:color-mix(in srgb,var(--on-dark) 75%,transparent)}
+.counter .big{font-family:var(--f-mono);font-weight:700;font-size:clamp(40px,9vw,96px);line-height:1;color:var(--signal);font-variant-numeric:tabular-nums;letter-spacing:-.03em;overflow-wrap:anywhere}
+.counter .big small{font-size:.32em;color:var(--on-dark);letter-spacing:0;margin-left:.3em;font-weight:500}
+.counter .row{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center;font-size:14px;color:color-mix(in srgb,var(--on-dark) 80%,transparent)}
+.counter .row strong{color:var(--on-dark);font-family:var(--f-mono)}
+.btn{border:0;border-radius:999px;padding:10px 18px;font-weight:700;font-size:15px;background:var(--leaf);color:#fff;display:inline-flex;align-items:center;gap:8px}
+.btn.ghost{background:transparent;color:inherit;box-shadow:inset 0 0 0 1.5px currentColor}
+.btn.ylw{background:var(--signal);color:#1B1A10}
+.btn:active{transform:translateY(1px)}
+.counter .btn.ghost{color:var(--on-dark)}
+.counter .row .sp{margin-left:auto}
+@media (max-width:560px){.counter .row .sp{margin-left:0}}
+
+/* evidence */
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+@media (max-width:820px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:26px;display:grid;gap:16px;align-content:start;min-width:0}
+.panel h3{font-size:24px}
+.bars{display:grid;gap:14px}
+.bar{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;align-items:center}
+.bar .yr{font-family:var(--f-mono);font-size:14px;color:var(--muted)}
+.track{height:44px;border-radius:10px;background:var(--leaf-soft);position:relative;overflow:hidden}
+.fill{height:100%;border-radius:10px;background:var(--leaf);display:flex;align-items:center;justify-content:flex-end;padding:0 12px;color:#fff;font-family:var(--f-mono);font-weight:700;font-size:15px;white-space:nowrap}
+.fill.hot{background:var(--danger)}
+.grow .fill{animation:grow 1.4s cubic-bezier(.2,.8,.2,1) both}
+@keyframes grow{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.delta{font-family:var(--f-display);font-size:44px;line-height:1;color:var(--danger)}
+.dots{display:grid;grid-template-columns:repeat(20,1fr);gap:4px;max-width:420px}
+.dots i{aspect-ratio:1;border-radius:3px;background:var(--line);display:block}
+.dots i.r{background:var(--leaf)}
+.grow .dots i.r{animation:pop .5s both}
+@keyframes pop{0%{transform:scale(.2)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
+.stat{font-family:var(--f-display);font-size:clamp(56px,9vw,88px);line-height:.9;color:var(--leaf)}
+.co{display:grid;gap:10px}
+.cobar{height:56px;border-radius:12px;background:var(--leaf-soft);overflow:hidden;display:flex}
+.cobar .med{width:5.75%;min-width:6px;background:var(--danger)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:14px}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.kv div{display:grid;gap:2px}
+.kv b{font-family:var(--f-mono);font-size:clamp(22px,3.4vw,30px);font-variant-numeric:tabular-nums}
+.kv span{font-size:14px;color:var(--muted)}
+.health{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:20px}
+@media (max-width:820px){.health{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.health div{border-top:3px solid var(--danger);padding-top:12px;display:grid;gap:4px}
+.health b{font-family:var(--f-display);font-size:20px}
+.health span{font-size:15px;color:var(--muted)}
+
+/* game */
+.game{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:clamp(16px,3vw,28px);display:grid;gap:20px}
+.hud{display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center}
+.hud .k{display:grid}
+.hud .k span{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:var(--f-mono)}
+.hud .k b{font-family:var(--f-mono);font-size:28px;line-height:1.1;font-variant-numeric:tabular-nums}
+.hud .sp{margin-left:auto}
+.timebar{height:8px;border-radius:999px;background:var(--line);overflow:hidden}
+.timebar i{display:block;height:100%;width:100%;background:var(--leaf);transform-origin:left;transition:transform .2s linear}
+.stage{display:grid;place-items:center;min-height:220px;position:relative}
+.item{touch-action:none;user-select:none;-webkit-user-select:none;background:var(--paper);border:2px solid var(--ink);border-radius:20px;padding:18px 26px;display:grid;justify-items:center;gap:6px;min-width:200px;cursor:grab;box-shadow:0 8px 0 var(--ink);position:relative;z-index:2}
+.item.drag{cursor:grabbing;box-shadow:0 18px 30px rgba(0,0,0,.25);transition:none}
+.item .emo{font-size:72px;line-height:1}
+.item .nm{font-family:var(--f-display);font-weight:800;font-size:22px;text-align:center}
+.item.in{animation:drop .45s cubic-bezier(.2,1.4,.4,1)}
+@keyframes drop{from{transform:translateY(-40px) scale(.8);opacity:0}}
+.item.bad{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+.hint{font-size:14px;color:var(--muted);text-align:center;margin-top:16px}
+.feedback{min-height:52px;border-radius:12px;padding:12px 16px;font-size:16px;background:var(--paper);border:1px solid var(--line)}
+.feedback.ok{border-color:var(--leaf);background:var(--leaf-soft)}
+.feedback.no{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 14%,var(--paper))}
+.bins{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:700px){.bins{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.bin{border:2px solid var(--line);background:var(--paper);border-radius:16px;padding:0 0 14px;display:grid;gap:4px;text-align:left;overflow:hidden;transition:transform .15s,border-color .15s}
+.bin .lid{height:22px;background:var(--c);border-bottom:2px solid color-mix(in srgb,var(--ink) 25%,transparent)}
+.bin[data-bin="white"] .lid{box-shadow:inset 0 -1px 0 var(--line)}
+.bin b{font-family:var(--f-display);font-size:19px;padding:8px 14px 0}
+.bin span{font-size:13px;color:var(--muted);padding:0 14px;line-height:1.35}
+.bin kbd{font-family:var(--f-mono);font-size:11px;color:var(--muted);padding:0 14px}
+.bin:hover,.bin.hover{transform:translateY(-4px);border-color:var(--ink)}
+.bin.flash-ok{border-color:var(--leaf);background:var(--leaf-soft)}
+.bin.flash-no{border-color:var(--danger)}
+.over{position:absolute;inset:0;display:grid;place-items:center;z-index:3}
+.over .card{background:var(--ink);color:var(--on-dark);border-radius:20px;padding:26px 30px;display:grid;gap:12px;justify-items:center;text-align:center;max-width:420px}
+.over .card h3{font-size:30px}
+.over .card p{color:color-mix(in srgb,var(--on-dark) 80%,transparent);font-size:15px}
+.over .card .score{font-family:var(--f-mono);font-size:56px;color:var(--signal);line-height:1}
+
+/* pledge */
+.pledges{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+@media (max-width:900px){.pledges{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:460px){.pledges{grid-template-columns:minmax(0,1fr)}}
+.pl{border:2px solid var(--line);border-radius:18px;background:var(--surface);padding:20px;display:grid;gap:10px;align-content:start;text-align:left;transition:background .2s,border-color .2s,transform .15s}
+.pl:hover{transform:translateY(-3px)}
+.pl .verb{font-family:var(--f-display);font-size:28px;line-height:1}
+.pl p{font-size:15px;color:var(--muted)}
+.pl .chk{font-family:var(--f-mono);font-size:13px;font-weight:700;display:inline-flex;gap:8px;align-items:center;color:var(--muted)}
+.pl .chk i{width:20px;height:20px;border-radius:6px;border:2px solid currentColor;display:inline-grid;place-items:center;font-style:normal;font-size:13px}
+.pl[aria-pressed="true"]{background:var(--leaf);border-color:var(--leaf);color:#fff}
+.pl[aria-pressed="true"] p,.pl[aria-pressed="true"] .chk{color:#fff}
+.pl[aria-pressed="true"] .chk i::after{content:"✓"}
+.progress{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-top:22px}
+.progress .meter{flex:1 1 220px;height:12px;border-radius:999px;background:var(--line);overflow:hidden}
+.progress .meter i{display:block;height:100%;background:var(--leaf);width:0;transition:width .4s}
+.progress b{font-family:var(--f-mono)}
+
+/* finale */
+.finale{background:var(--ink);color:var(--on-dark);border-bottom:0}
+.finale .eyebrow{color:var(--signal)}
+.finale h2{font-size:clamp(52px,11vw,128px);line-height:.88;letter-spacing:-.045em}
+.finale h2 em{font-style:normal;color:var(--signal)}
+.trio{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.trio span{font-family:var(--f-mono);font-weight:700;font-size:14px;letter-spacing:.14em;padding:8px 16px;border:1.5px solid var(--on-dark);border-radius:999px}
+.recap{margin-top:40px;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:28px;align-items:end}
+@media (max-width:760px){.recap{grid-template-columns:minmax(0,1fr)}}
+.recap .lbl{font-size:15px;color:color-mix(in srgb,var(--on-dark) 75%,transparent)}
+.recap .big{font-family:var(--f-mono);font-size:clamp(34px,6vw,60px);color:var(--signal);font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.quote{font-family:var(--f-display);font-size:clamp(24px,3.4vw,34px);line-height:1.1;font-weight:500}
+.qr{display:flex;gap:16px;align-items:center;margin-top:36px;flex-wrap:wrap}
+.qr .box{background:#fff;padding:10px;border-radius:12px;line-height:0}
+.qr p{font-size:15px;color:color-mix(in srgb,var(--on-dark) 80%,transparent);max-width:280px}
+.team{margin-top:56px;padding-top:28px;border-top:1px solid color-mix(in srgb,var(--on-dark) 20%,transparent);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}
+@media (max-width:760px){.team{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.team div{display:grid;gap:2px}
+.team b{font-size:15px}
+.team span{font-size:13px;color:color-mix(in srgb,var(--on-dark) 65%,transparent);font-family:var(--f-mono)}
+.credit{margin-top:24px;font-size:13px;color:color-mix(in srgb,var(--on-dark) 65%,transparent)}
+.refs{padding-block:40px 56px;background:var(--paper)}
+.refs ol{margin:12px 0 0;padding-left:20px;display:grid;gap:8px;font-size:14px;color:var(--muted)}
+.refs a{color:var(--leaf);word-break:break-word}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+
+<nav class="nav" aria-label="Chapters">
+  <div class="wrap">
+    <div class="brand">Less Waste, <b>More Life!</b></div>
+    <ul>
+      <li><a href="#live">Live</a></li>
+      <li><a href="#evidence">Evidence</a></li>
+      <li><a href="#sort">Sort it</a></li>
+      <li><a href="#pledge">Pledge</a></li>
+      <li><a href="#finale">Finale</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero" id="live">
+  <div class="wrap">
+    <p class="eyebrow">An environmental awareness campaign · English II</p>
+    <h1 style="margin-top:14px"><span>Less waste,</span><span class="l2">more life!</span></h1>
+    <p class="meta">Solid waste pollution is the incorrect disposal and accumulation of garbage in streets, rivers and public spaces.</p>
+
+    <div class="counter" aria-live="off">
+      <canvas id="rain" aria-hidden="true"></canvas>
+      <p class="lbl">Since you opened this page, the world has produced</p>
+      <div class="big"><span id="tons">0.0</span><small>tonnes of solid waste</small></div>
+      <div class="row">
+        <span>That is about <strong id="trucks">0</strong> garbage trucks (10 t each)</span>
+        <span>Time: <strong id="clock">00:00</strong></span>
+        <span class="sp"><button class="btn ghost" id="reset" type="button">Restart counter</button></span>
+      </div>
+      <p class="lbl" style="font-size:13px">≈ 81 tonnes every second, based on 2.56 billion tonnes generated in 2022 (World Bank, What a Waste 3.0).</p>
+    </div>
+  </div>
+</header>
+
+<section id="evidence">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">The evidence</p>
+      <h2>The garbage keeps growing</h2>
+      <p>Three numbers explain why this is a serious problem, around the world and here in Medellín.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="panel obs">
+        <h3>Global solid waste per year</h3>
+        <div class="bars">
+          <div class="bar"><span class="yr">2022</span><div class="track"><div class="fill" style="width:66.3%">2.56 B t</div></div></div>
+          <div class="bar"><span class="yr">2050</span><div class="track"><div class="fill hot" style="width:100%">3.86 B t</div></div></div>
+        </div>
+        <div style="display:flex;gap:14px;align-items:baseline;flex-wrap:wrap"><span class="delta">+51%</span><span class="src">expected by 2050 if nothing changes</span></div>
+        <p class="src">Source: World Bank, What a Waste 3.0</p>
+      </div>
+
+      <div class="panel obs">
+        <h3>Plastic that was recycled</h3>
+        <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+          <span class="stat">9%</span>
+          <p style="flex:1 1 200px;min-width:0">Only 9 of every 100 tonnes of plastic waste were recycled in 2019. The other 91 were burned, buried or left in nature.</p>
+        </div>
+        <div class="dots" id="dots" role="img" aria-label="100 squares, 9 highlighted as recycled"></div>
+        <p class="src">Source: OECD (2022)</p>
+      </div>
+
+      <div class="panel obs" style="grid-column:1/-1">
+        <h3>Colombia: how are we doing?</h3>
+        <div class="co">
+          <div class="cobar" role="img" aria-label="Medellín is about 5.7% of Colombia's disposed waste"><div class="med"></div></div>
+          <div class="legend"><span><i style="background:var(--danger)"></i>Medellín ≈ 5.7%</span><span><i style="background:var(--leaf-soft);border:1px solid var(--line)"></i>Rest of Colombia</span></div>
+        </div>
+        <div class="kv">
+          <div><b>12,150,000 t</b><span>Colombia, disposed in 2024</span></div>
+          <div><b>698,532 t</b><span>Medellín, disposed in 2024</span></div>
+          <div><b>≈ 1,914 t</b><span>Medellín, every single day</span></div>
+          <div><b>≈ 191</b><span>Garbage trucks a day in Medellín</span></div>
+        </div>
+        <p class="src">Public sanitation service only. Source: Superservicios, Agudelo Patarroyo et al. (2025)</p>
+      </div>
+    </div>
+
+    <div class="health">
+      <div><b>Dirty water</b><span>Waste leaks into rivers and spreads waterborne disease.</span></div>
+      <div><b>Polluted soil</b><span>Toxins move from the ground into our food.</span></div>
+      <div><b>Toxic air</b><span>Burning garbage releases harmful smoke.</span></div>
+      <div><b>Dengue</b><span>Old tires and containers hold rainwater where mosquitoes breed.</span></div>
+    </div>
+    <p class="src" style="margin-top:12px">Source: WHO (2022)</p>
+  </div>
+</section>
+
+<section id="sort">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">Your turn</p>
+      <h2>Sort it! 45 seconds</h2>
+      <p>Drag each item into the right bin, or tap a bin. In Colombia, the bin colors are white, green and black. Batteries and electronics go to a special drop-off point.</p>
+    </div>
+
+    <div class="game" id="game">
+      <div class="hud">
+        <div class="k"><span>Score</span><b id="score">0</b></div>
+        <div class="k"><span>Streak</span><b id="streak">0</b></div>
+        <div class="k"><span>Time</span><b id="time">45</b></div>
+        <div class="k"><span>Best</span><b id="best">0</b></div>
+        <span class="sp"><button class="btn" id="start" type="button">Start game</button></span>
+      </div>
+      <div class="timebar"><i id="tbar"></i></div>
+      <div class="stage" id="stage">
+        <div>
+          <div class="item" id="item" aria-live="polite"><span class="emo" id="emo">🍌</span><span class="nm" id="nm">Banana peel</span></div>
+          <p class="hint" id="hint">Example item. Press Start to play.</p>
+        </div>
+        <div class="over" id="over" hidden>
+          <div class="card">
+            <p class="eyebrow" style="color:var(--signal)">Time's up</p>
+            <span class="score" id="final">0</span>
+            <h3 id="verdict">Nice sorting!</h3>
+            <p id="summary"></p>
+            <button class="btn ylw" id="again" type="button">Play again</button>
+          </div>
+        </div>
+      </div>
+      <div class="feedback" id="fb">Tip: clean and dry recyclables go in the white bin. Food scraps go in the green bin.</div>
+      <div class="bins" id="bins">
+        <button class="bin" data-bin="white" style="--c:var(--bin-white)" type="button"><span class="lid"></span><b>White bin</b><span>Recyclables: clean and dry plastic, paper, glass, metal</span><kbd>Key 1</kbd></button>
+        <button class="bin" data-bin="green" style="--c:var(--bin-green)" type="button"><span class="lid"></span><b>Green bin</b><span>Organic waste: food scraps and garden waste</span><kbd>Key 2</kbd></button>
+        <button class="bin" data-bin="black" style="--c:var(--bin-black)" type="button"><span class="lid"></span><b>Black bin</b><span>Non-recyclable: dirty, greasy or mixed materials</span><kbd>Key 3</kbd></button>
+        <button class="bin" data-bin="red" style="--c:var(--bin-red)" type="button"><span class="lid"></span><b>Drop-off point</b><span>Hazardous: batteries, electronics, medicine, bulbs</span><kbd>Key 4</kbd></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pledge">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">The campaign</p>
+      <h2>Five small actions</h2>
+      <p>Our campaign targets students, families and communities. Choose the actions you will start this week.</p>
+    </div>
+    <div class="pledges" id="pledges"></div>
+    <div class="progress">
+      <div class="meter"><i id="pbar"></i></div>
+      <b id="pcount">0 of 5 actions</b>
+    </div>
+  </div>
+</section>
+
+<section class="finale" id="finale">
+  <div class="wrap">
+    <p class="eyebrow">Our message</p>
+    <h2 style="margin-top:14px">The planet is not a <em>trash can!</em></h2>
+    <div class="trio"><span>REDUCE</span><span>REUSE</span><span>RECYCLE</span></div>
+    <div class="recap">
+      <div>
+        <p class="lbl">While this page was open, the world produced</p>
+        <p class="big"><span id="tons2">0</span> t</p>
+        <p class="lbl">about <span id="trucks2">0</span> garbage trucks of waste.</p>
+      </div>
+      <p class="quote">Small actions today can create a cleaner planet tomorrow.</p>
+    </div>
+    <div class="qr" id="qrwrap" hidden>
+      <div class="box" id="qr"></div>
+      <p>Scan to open this page on your phone and play the sorting game.</p>
+    </div>
+    <div class="team">
+      <div><b>Wilber Arenas</b><span>The problem</span></div>
+      <div><b>Isaac Echavarría</b><span>The evidence</span></div>
+      <div><b>Marlon Muñoz</b><span>The impact</span></div>
+      <div><b>Jaider Jiménez</b><span>The campaign</span></div>
+      <div><b>Jefferson Mendoza</b><span>The action</span></div>
+    </div>
+    <p class="credit">English II Final Project · Professor Jesús Antonio Mendoza Gil · Institución Universitaria Pascual Bravo · Medellín, 2026</p>
+  </div>
+</section>
+
+<footer class="refs">
+  <div class="wrap">
+    <p class="eyebrow">References</p>
+    <ol>
+      <li>Agudelo Patarroyo, D. F., Páez Lugo, E. A., Polo Pedroza, K. J., &amp; Galán Zambrano, P. A. (2025). <em>Informe nacional de disposición final de residuos sólidos en Colombia en el año 2024.</em> Superintendencia de Servicios Públicos Domiciliarios.</li>
+      <li>Organisation for Economic Co-operation and Development. (2022, February 22). <em>Plastic pollution is growing relentlessly as waste management and recycling fall short, says OECD.</em></li>
+      <li>United Nations Environment Programme. (2024). <em>Global waste management outlook 2024.</em> <a href="https://www.unep.org/en/publications/report/global-waste-management-outlook-2024" target="_blank" rel="noopener">unep.org</a></li>
+      <li>World Bank. (n.d.). <em>What a waste 3.0: Global snapshot of solid waste management toward circularity until 2050.</em> <a href="https://www.worldbank.org/en/publication/what-a-waste" target="_blank" rel="noopener">worldbank.org</a></li>
+      <li>World Health Organization. (2022). <em>Guidance on solid waste and health.</em> <a href="https://www.who.int/tools/compendium-on-health-and-environment/solid-waste" target="_blank" rel="noopener">who.int</a></li>
+    </ol>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function(){
+  const SHARE_URL = /^https?:/.test(location.protocol) ? location.origin + location.pathname : "";
+  const store = {
+    get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},
+    set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+  };
+  const $ = id => document.getElementById(id);
+  const fmt1 = n => n.toLocaleString("en-US",{minimumFractionDigits:1,maximumFractionDigits:1});
+  const fmt0 = n => Math.floor(n).toLocaleString("en-US");
+
+  /* ---------- live counter ---------- */
+  const RATE = 2.56e9 / (365*24*3600); // tonnes per second ≈ 81.2
+  let t0 = performance.now();
+  $("reset").addEventListener("click",()=>{t0 = performance.now();});
+  function tick(){
+    const s = (performance.now()-t0)/1000;
+    const tons = s*RATE;
+    $("tons").textContent = fmt1(tons);
+    $("tons2").textContent = fmt0(tons);
+    $("trucks").textContent = fmt0(tons/10);
+    $("trucks2").textContent = fmt0(tons/10);
+    const m = Math.floor(s/60), sec = Math.floor(s%60);
+    $("clock").textContent = String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  /* falling debris in the counter */
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const cv = $("rain"), cx = cv.getContext("2d");
+  let W=0,H=0,parts=[];
+  function size(){const r=cv.getBoundingClientRect();const d=devicePixelRatio||1;W=r.width;H=r.height;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0);}
+  size(); addEventListener("resize",size);
+  const cols=["#F2B200","#4CC38A","#E66A52","#9fb4ab"];
+  for(let i=0;i<46;i++)parts.push({x:Math.random(),y:Math.random(),v:.02+Math.random()*.05,s:2+Math.random()*5,r:Math.random()*6,c:cols[i%4],k:i%3});
+  let last=performance.now();
+  function rain(now){
+    const dt=Math.min(.05,(now-last)/1000);last=now;
+    cx.clearRect(0,0,W,H);
+    for(const p of parts){
+      if(!reduce){p.y+=p.v*dt*3;p.r+=dt;}
+      if(p.y>1.05){p.y=-.05;p.x=Math.random();}
+      const x=p.x*W,y=p.y*H;
+      cx.save();cx.translate(x,y);cx.rotate(p.r);cx.fillStyle=p.c;cx.globalAlpha=.55;
+      if(p.k===0)cx.fillRect(-p.s,-p.s/2,p.s*2,p.s);
+      else if(p.k===1){cx.beginPath();cx.arc(0,0,p.s*.7,0,7);cx.fill();}
+      else{cx.beginPath();cx.moveTo(0,-p.s);cx.lineTo(p.s,p.s);cx.lineTo(-p.s,p.s);cx.closePath();cx.fill();}
+      cx.restore();
+    }
+    requestAnimationFrame(rain);
+  }
+  requestAnimationFrame(rain);
+
+  /* ---------- evidence ---------- */
+  const dots=$("dots");
+  for(let i=0;i<100;i++){const e=document.createElement("i");if(i<9){e.className="r";e.style.animationDelay=(i*.08)+"s";}dots.appendChild(e);}
+  if("IntersectionObserver" in window){
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("grow");io.unobserve(e.target);}}),{threshold:.35});
+    document.querySelectorAll(".obs").forEach(el=>io.observe(el));
+  }
+
+  /* nav highlight */
+  const links=[...document.querySelectorAll(".nav a")];
+  if("IntersectionObserver" in window){
+    const so=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+e.target.id));}}),{rootMargin:"-45% 0px -50% 0px"});
+    ["live","evidence","sort","pledge","finale"].forEach(id=>so.observe($(id)));
+  }
+
+  /* ---------- sorting game ---------- */
+  const ITEMS=[
+    ["🧴","Empty plastic bottle","white","Rinse it and close the cap. Clean and dry plastic goes in the white bin."],
+    ["📦","Cardboard box","white","Flatten it first so it takes less space."],
+    ["🍾","Glass bottle","white","Glass can be recycled again and again."],
+    ["🥫","Clean metal can","white","Metal cans are recyclable once they are rinsed."],
+    ["📰","Old newspaper","white","Dry paper is recyclable. Wet or dirty paper is not."],
+    ["🥛","Clean milk carton","white","Rinse and flatten it. Clean cartons are recyclable."],
+    ["🍌","Banana peel","green","Food scraps are organic. They can become compost."],
+    ["🍎","Apple core","green","Fruit scraps go in the green bin."],
+    ["🥚","Eggshells","green","Eggshells are organic and great for compost."],
+    ["☕","Coffee grounds","green","Coffee grounds are organic waste."],
+    ["🍚","Leftover rice","green","Food leftovers go in the green bin."],
+    ["🥕","Vegetable scraps","green","Peels and scraps are organic."],
+    ["🧻","Used napkin","black","Dirty paper cannot be recycled."],
+    ["🍕","Greasy pizza box","black","Grease ruins paper for recycling."],
+    ["🍬","Candy wrapper","black","Mixed plastic wrappers are not recyclable."],
+    ["😷","Used face mask","black","Used masks are non-recyclable waste."],
+    ["🚬","Cigarette butt","black","Cigarette butts are toxic and not recyclable."],
+    ["🍟","Chip bag","black","Shiny chip bags mix plastic and metal, so they are not recyclable."],
+    ["🔋","AA battery","red","Batteries leak toxic metals. Take them to a collection point."],
+    ["📱","Old phone","red","Electronics contain valuable and toxic materials. Use a drop-off point."],
+    ["💡","Fluorescent bulb","red","Some bulbs contain mercury. Never put them in a normal bin."],
+    ["💊","Expired medicine","red","Return medicine to a pharmacy collection point."],
+    ["🔌","Broken charger","red","Cables and chargers are electronic waste."]
+  ];
+  const BIN_NAME={white:"the white bin",green:"the green bin",black:"the black bin",red:"a drop-off point"};
+  const DUR=45;
+  let deck=[],cur=null,score=0,streak=0,running=false,endAt=0,answered=0,correct=0,timer=null;
+  let best=store.get("lwml-best",0);$("best").textContent=best;
+  const item=$("item"),fb=$("fb"),bins=[...document.querySelectorAll(".bin")];
+
+  function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+  function next(){
+    if(!deck.length)deck=shuffle(ITEMS.slice());
+    cur=deck.pop();
+    $("emo").textContent=cur[0];$("nm").textContent=cur[1];
+    item.classList.remove("in","bad");void item.offsetWidth;item.classList.add("in");
+  }
+  function start(){
+    score=0;streak=0;answered=0;correct=0;deck=[];
+    $("score").textContent=0;$("streak").textContent=0;
+    $("over").hidden=true;$("hint").textContent="Drag the item to a bin, tap a bin, or press keys 1 to 4.";
+    fb.className="feedback";fb.textContent="Go!";
+    running=true;endAt=performance.now()+DUR*1000;next();
+    $("start").textContent="Restart";
+    clearInterval(timer);timer=setInterval(updTime,100);updTime();
+  }
+  function updTime(){
+    const left=Math.max(0,(endAt-performance.now())/1000);
+    $("time").textContent=Math.ceil(left);
+    $("tbar").style.transform="scaleX("+(left/DUR)+")";
+    if(left<=0)finish();
+  }
+  function finish(){
+    running=false;clearInterval(timer);
+    if(score>best){best=score;store.set("lwml-best",best);$("best").textContent=best;}
+    $("final").textContent=score;
+    const acc=answered?Math.round(correct/answered*100):0;
+    $("verdict").textContent=acc>=85?"Waste-sorting expert!":acc>=60?"Good job, keep practicing!":"The planet needs your help!";
+    $("summary").textContent=correct+" of "+answered+" items in the right place ("+acc+"% accuracy).";
+    $("over").hidden=false;
+  }
+  function answer(bin){
+    if(!running||!cur)return;
+    const btn=bins.find(b=>b.dataset.bin===bin);
+    answered++;
+    if(bin===cur[2]){
+      correct++;streak++;const pts=10+Math.max(0,streak-2)*2;score+=pts;
+      fb.className="feedback ok";fb.innerHTML="<b>Correct! +"+pts+"</b> "+cur[3];
+      flash(btn,"flash-ok");next();
+    }else{
+      streak=0;
+      fb.className="feedback no";fb.innerHTML="<b>Not quite.</b> "+cur[1]+" goes in "+BIN_NAME[cur[2]]+". "+cur[3];
+      flash(btn,"flash-no");item.classList.remove("in","bad");void item.offsetWidth;item.classList.add("bad");
+      setTimeout(()=>{if(running)next();},650);
+    }
+    $("score").textContent=score;$("streak").textContent=streak;
+  }
+  function flash(b,c){if(!b)return;b.classList.add(c);setTimeout(()=>b.classList.remove(c),450);}
+  bins.forEach(b=>b.addEventListener("click",()=>{if(!running){start();return;}answer(b.dataset.bin);}));
+  $("start").addEventListener("click",start);
+  $("again").addEventListener("click",start);
+  addEventListener("keydown",e=>{
+    if(!running)return;
+    const map={"1":"white","2":"green","3":"black","4":"red"};
+    if(map[e.key]){e.preventDefault();answer(map[e.key]);}
+  });
+
+  /* drag and drop */
+  let drag=null;
+  item.addEventListener("pointerdown",e=>{
+    if(!running){start();return;}
+    drag={x:e.clientX,y:e.clientY,id:e.pointerId};item.setPointerCapture(e.pointerId);item.classList.add("drag");
+  });
+  item.addEventListener("pointermove",e=>{
+    if(!drag||e.pointerId!==drag.id)return;
+    item.style.transform="translate("+(e.clientX-drag.x)+"px,"+(e.clientY-drag.y)+"px) rotate("+((e.clientX-drag.x)/20)+"deg)";
+    const hit=binAt(e.clientX,e.clientY);bins.forEach(b=>b.classList.toggle("hover",b===hit));
+  });
+  function endDrag(e){
+    if(!drag||e.pointerId!==drag.id)return;
+    const hit=binAt(e.clientX,e.clientY);
+    drag=null;item.classList.remove("drag");item.style.transform="";bins.forEach(b=>b.classList.remove("hover"));
+    if(hit)answer(hit.dataset.bin);
+  }
+  item.addEventListener("pointerup",endDrag);
+  item.addEventListener("pointercancel",endDrag);
+  function binAt(x,y){
+    item.style.pointerEvents="none";const el=document.elementFromPoint(x,y);item.style.pointerEvents="";
+    return el?el.closest(".bin"):null;
+  }
+
+  /* ---------- pledge ---------- */
+  const ACTIONS=[
+    ["Separate","Use the right container for each type of material."],
+    ["Reduce","Say no to single-use plastics. Carry a reusable bag, bottle and container."],
+    ["Reuse","Give objects a second life before you throw them away."],
+    ["Clean up","Join a clean-up and recover public spaces with your community."],
+    ["Educate","Share what you learned with your family and friends."]
+  ];
+  let picked=store.get("lwml-pledge",[]);
+  const wrap=$("pledges");
+  ACTIONS.forEach((a,i)=>{
+    const b=document.createElement("button");b.type="button";b.className="pl";b.id="pledge-"+i;
+    b.innerHTML='<span class="verb">'+a[0]+'</span><p>'+a[1]+'</p><span class="chk"><i></i>I\'ll do it</span>';
+    b.setAttribute("aria-pressed",picked.includes(i)?"true":"false");
+    b.addEventListener("click",()=>{
+      picked=picked.includes(i)?picked.filter(x=>x!==i):picked.concat(i);
+      b.setAttribute("aria-pressed",picked.includes(i)?"true":"false");store.set("lwml-pledge",picked);upd();
+    });
+    wrap.appendChild(b);
+  });
+  function upd(){
+    $("pbar").style.width=(picked.length/5*100)+"%";
+    $("pcount").textContent=picked.length===5?"5 of 5 actions. You are part of the campaign!":picked.length+" of 5 actions";
+  }
+  upd();
+
+  /* ---------- QR ---------- */
+  if(SHARE_URL && window.QRCode){
+    $("qrwrap").hidden=false;
+    new QRCode($("qr"),{text:SHARE_URL,width:150,height:150,colorDark:"#10231E",colorLight:"#ffffff"});
+  }
+})();
+</script>
+
+</body>
+</html>
